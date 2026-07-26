@@ -1,17 +1,17 @@
 package com.kien.quanlynhahang.controller;
 
+import lombok.RequiredArgsConstructor;
+
 import com.kien.quanlynhahang.dto.GiaoDichDTO;
 import com.kien.quanlynhahang.entity.GiaoDich;
 import com.kien.quanlynhahang.service.GiaoDichService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/giaodich")
 public class GiaoDichController {
-
-    @Autowired
-    private GiaoDichService giaoDichService;
+    private final GiaoDichService giaoDichService;
 
     @PostMapping
     public GiaoDich thanhToan(@RequestBody GiaoDichDTO dto) {

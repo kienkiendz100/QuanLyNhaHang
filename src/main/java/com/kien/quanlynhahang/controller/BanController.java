@@ -1,23 +1,23 @@
 package com.kien.quanlynhahang.controller;
 
+import lombok.RequiredArgsConstructor;
+
 import com.kien.quanlynhahang.dto.BanDTO;
 import com.kien.quanlynhahang.entity.Ban;
 import com.kien.quanlynhahang.entity.KhuVuc;
 import com.kien.quanlynhahang.repository.BanRepository;
 import com.kien.quanlynhahang.repository.KhuVucRepository;
 import com.kien.quanlynhahang.service.BanService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/ban")
 public class BanController {
-    @Autowired
-    private BanRepository banrp;
-    @Autowired
-    private BanService bansv;
+    private final BanRepository banrp;
+    private final BanService bansv;
 
     @GetMapping
     public List<Ban> laytatca(){

@@ -1,20 +1,21 @@
 package com.kien.quanlynhahang.controller;
 
+import lombok.RequiredArgsConstructor;
+
 import com.kien.quanlynhahang.dto.BanDTO;
 import com.kien.quanlynhahang.dto.DatBanDTO;
 import com.kien.quanlynhahang.entity.Ban;
 import com.kien.quanlynhahang.entity.DatBan;
 import com.kien.quanlynhahang.service.DatBanService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/datban")
 public class DatBanController {
-    @Autowired
-    public DatBanService dbsv;
+    private final DatBanService dbsv;
 
     @PostMapping
     public DatBan them(@RequestBody DatBanDTO dto){

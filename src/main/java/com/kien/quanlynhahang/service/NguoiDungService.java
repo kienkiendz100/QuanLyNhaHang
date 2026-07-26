@@ -1,18 +1,18 @@
 package com.kien.quanlynhahang.service;
 
+import lombok.RequiredArgsConstructor;
+
 import com.kien.quanlynhahang.dto.NguoiDungDTO;
 import com.kien.quanlynhahang.entity.NguoiDung;
 import com.kien.quanlynhahang.repository.NguoiDungRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
 public class NguoiDungService {
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private NguoiDungRepository nguoiDungRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final NguoiDungRepository nguoiDungRepository;
 
     public NguoiDung them(NguoiDungDTO dto){
 

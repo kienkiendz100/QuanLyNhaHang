@@ -1,16 +1,17 @@
 package com.kien.quanlynhahang.service;
 
+import lombok.RequiredArgsConstructor;
+
 import com.kien.quanlynhahang.dto.KhachHangDTO;
 import com.kien.quanlynhahang.entity.KhachHang;
 import com.kien.quanlynhahang.repository.KhachHangRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+@RequiredArgsConstructor
 @Service
 public class KhachHangService {
-    @Autowired
-    private KhachHangRepository khrp;
+    private final KhachHangRepository khrp;
 
     public KhachHang them (KhachHangDTO dto ){
         KhachHang  kh = new KhachHang();

@@ -1,20 +1,20 @@
 package com.kien.quanlynhahang.service;
 
+import lombok.RequiredArgsConstructor;
+
 import com.kien.quanlynhahang.dto.MonAnDTO;
 import com.kien.quanlynhahang.entity.LoaiMon;
 import com.kien.quanlynhahang.entity.MonAn;
 import com.kien.quanlynhahang.repository.LoaiMonRepository;
 import com.kien.quanlynhahang.repository.MonAnRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+@RequiredArgsConstructor
 @Service
 public class MonAnService {
-    @Autowired
-    private MonAnRepository mar;
-    @Autowired
-    private LoaiMonRepository lmr;
+    private final MonAnRepository mar;
+    private final LoaiMonRepository lmr;
 
     public MonAn them (MonAnDTO dto){
         LoaiMon lm  = lmr.findById(dto.getMaLoai()).orElseThrow(() -> new RuntimeException("Không tìm thấy loại món "));

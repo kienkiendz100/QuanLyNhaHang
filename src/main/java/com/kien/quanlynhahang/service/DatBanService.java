@@ -1,21 +1,21 @@
 package com.kien.quanlynhahang.service;
 
+import lombok.RequiredArgsConstructor;
+
 import com.kien.quanlynhahang.dto.DatBanDTO;
 import com.kien.quanlynhahang.entity.DatBan;
 import com.kien.quanlynhahang.entity.KhachHang;
 import com.kien.quanlynhahang.repository.DatBanRepository;
 import com.kien.quanlynhahang.repository.KhachHangRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class DatBanService {
-    @Autowired
-    public DatBanRepository dbr;
-    @Autowired
-    public KhachHangRepository khrp;
+    private final DatBanRepository dbr;
+    private final KhachHangRepository khrp;
 
     public  DatBan them(DatBanDTO dto){
         DatBan db = new DatBan();

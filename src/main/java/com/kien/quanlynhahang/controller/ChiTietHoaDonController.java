@@ -1,21 +1,21 @@
 package com.kien.quanlynhahang.controller;
 
+import lombok.RequiredArgsConstructor;
+
 import com.kien.quanlynhahang.dto.CapNhatSoLuongDTO;
 import com.kien.quanlynhahang.dto.ThemMonDTO;
 import com.kien.quanlynhahang.entity.ChiTietHoaDon;
 import com.kien.quanlynhahang.entity.HoaDon;
 import com.kien.quanlynhahang.service.ChiTietHoaDonService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/chitiethoadon")
 public class ChiTietHoaDonController {
-
-    @Autowired
-    private ChiTietHoaDonService chiTietHoaDonService;
+    private final ChiTietHoaDonService chiTietHoaDonService;
 
     @PostMapping("/{maHD}/them-mon")
     public ChiTietHoaDon themMon(@PathVariable Integer maHD, @RequestBody ThemMonDTO dto) {

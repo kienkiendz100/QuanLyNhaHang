@@ -1,20 +1,21 @@
 package com.kien.quanlynhahang.controller;
 
+import lombok.RequiredArgsConstructor;
+
 import com.kien.quanlynhahang.dto.HoaDonDTO;
 import com.kien.quanlynhahang.dto.ThemMonDTO;
 import com.kien.quanlynhahang.entity.HoaDon;
 import com.kien.quanlynhahang.service.HoaDonService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
     @RequestMapping("/hoadon")
     public class HoaDonController {
-        @Autowired
-        private HoaDonService hoaDonService;
+        private final HoaDonService hoaDonService;
 
         @GetMapping
         public List<HoaDon> laytat(){

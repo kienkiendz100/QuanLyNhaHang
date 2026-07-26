@@ -1,23 +1,23 @@
 package com.kien.quanlynhahang.service;
 
+import lombok.RequiredArgsConstructor;
+
 import com.kien.quanlynhahang.dto.BanDTO;
 import com.kien.quanlynhahang.entity.Ban;
 import com.kien.quanlynhahang.entity.KhuVuc;
 import com.kien.quanlynhahang.repository.BanRepository;
 import com.kien.quanlynhahang.repository.KhuVucRepository;
 import org.jspecify.annotations.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class BanService {
-    @Autowired
-    private BanRepository banrp;
-    @Autowired
-    private KhuVucRepository khuvucrp;
+    private final BanRepository banrp;
+    private final KhuVucRepository khuvucrp;
 
     public Ban themban(@RequestBody BanDTO dto) {
         KhuVuc khuVuc = khuvucrp.findById(dto.getMaKhuVuc()).orElseThrow(() -> new RuntimeException("Không tìm thấy khu vực"));

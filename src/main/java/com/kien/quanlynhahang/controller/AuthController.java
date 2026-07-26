@@ -1,11 +1,12 @@
 package com.kien.quanlynhahang.controller;
 
+import lombok.RequiredArgsConstructor;
+
 import com.kien.quanlynhahang.dto.JwtResponse;
 import com.kien.quanlynhahang.dto.LoginRequest;
 import com.kien.quanlynhahang.dto.LoginResponse;
 import com.kien.quanlynhahang.security.JwtService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,15 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     @GetMapping("/login")
     public Map<String, String> huongDanLogin() {

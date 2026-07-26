@@ -1,6 +1,6 @@
 package com.kien.quanlynhahang.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,17 +17,13 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableMethodSecurity
+@RequiredArgsConstructor
 @Configuration
 public class SecurityConfig {
-
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
-    @Autowired
-    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    @Autowired
-    private JwtAccessDeniedHandler jwtAccessDeniedHandler;
-    @Autowired
-    private JwtFilter jwtFilter;
+    private final CustomUserDetailsService customUserDetailsService;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JwtFilter jwtFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {

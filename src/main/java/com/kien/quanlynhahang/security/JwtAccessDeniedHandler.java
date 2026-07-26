@@ -5,7 +5,6 @@ import com.kien.quanlynhahang.dto.ApiError;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
@@ -25,15 +24,10 @@ import java.time.LocalDateTime;
             throws IOException {
 
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-
         response.setContentType("application/json");
-
         response.setCharacterEncoding("UTF-8");
-
         ApiError error = new ApiError(403, "Bạn không có quyền truy cập", LocalDateTime.now());
-
         ObjectMapper objectMapper = new ObjectMapper();
-
         objectMapper.writeValue(
                 response.getWriter(),
                 error

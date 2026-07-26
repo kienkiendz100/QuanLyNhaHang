@@ -1,22 +1,21 @@
 package com.kien.quanlynhahang.service;
 
+import lombok.RequiredArgsConstructor;
+
 import com.kien.quanlynhahang.dto.GiaoDichDTO;
 import com.kien.quanlynhahang.entity.GiaoDich;
 import com.kien.quanlynhahang.entity.HoaDon;
 import com.kien.quanlynhahang.repository.GiaoDichRepository;
 import com.kien.quanlynhahang.repository.HoaDonRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+@RequiredArgsConstructor
 @Service
 public class GiaoDichService {
-
-    @Autowired
-    private GiaoDichRepository giaoDichRepository;
-    @Autowired
-    private HoaDonRepository hoaDonRepository;
+    private final GiaoDichRepository giaoDichRepository;
+    private final HoaDonRepository hoaDonRepository;
 
     public GiaoDich thanhToan(GiaoDichDTO dto) {
 
