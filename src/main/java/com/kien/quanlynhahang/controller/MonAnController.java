@@ -4,10 +4,13 @@ import lombok.RequiredArgsConstructor;
 
 import com.kien.quanlynhahang.dto.MonAnDTO;
 import com.kien.quanlynhahang.entity.MonAn;
-import com.kien.quanlynhahang.service.KhachHangService;
 import com.kien.quanlynhahang.service.MonAnService;
-import jakarta.validation.Valid;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import tools.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
 
 import java.util.List;
 
@@ -16,14 +19,17 @@ import java.util.List;
 @RequestMapping("/monan")
 public class MonAnController {
     private final MonAnService mas;
+    private final ObjectMapper objectMapper;
 
     @GetMapping
     public List<MonAn> laytat(){
-        return mas.laytat();
+        return mas.layTat();
     }
 
-    @PostMapping
-    public MonAn them ( @Valid @RequestBody MonAnDTO dto ){
-        return mas.them(dto);
-    }
-}
+    @PostMapping(value = "/them", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public MonAn themMon(@RequestPart("monAn") String monAn,
+                         @RequestPart("file") MultipartFile file) throws IOException {
+
+        MonAnDTO dto = objectMapper.readValue(monAn, MonAnDTO.class);
+        return mas.themMon(dto, file);
+    }}

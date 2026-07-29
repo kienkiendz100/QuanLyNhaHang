@@ -1,5 +1,5 @@
 package com.kien.quanlynhahang.exception;
-import com.kien.quanlynhahang.dto.ApiError;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import tools.jackson.core.exc.StreamReadException;
 
 import java.time.LocalDateTime;
 
@@ -47,9 +48,28 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(error);
     }
 
+    @ExceptionHandler(StreamReadException.class)
+    public ResponseEntity<ApiError> xuLyJsonKhongHopLe(StreamReadException ex) {
+        ApiError error = new ApiError(400, "Dữ liệu món ăn không đúng định dạng JSON", LocalDateTime.now());
+        return ResponseEntity.badRequest().body(error);
+    }
+
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ApiError> xuLySaiMethod(HttpRequestMethodNotSupportedException ex) {
         ApiError error = new ApiError(405, "Sai phương thức HTTP", LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(error);
+    }
+
+    @ExceptionHandler(UploadFileException.class)
+    public ResponseEntity<ApiError> handleUploadFileException(
+            UploadFileException ex) {
+
+        ApiError error = new ApiError(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.badRequest().body(error);
     }
 }

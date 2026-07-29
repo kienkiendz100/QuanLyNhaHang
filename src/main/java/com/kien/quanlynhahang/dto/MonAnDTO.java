@@ -17,6 +17,12 @@ public class MonAnDTO {
     @Positive(message = "Đơn giá phải lớn hơn 0")
     private BigDecimal donGia;
 
+    public void setGia(BigDecimal gia) {
+        this.donGia = gia;
+    }
+
     @NotNull(message = "Mã loại không được để trống")
     private Integer maLoai;
+
+    private String anh;
 }

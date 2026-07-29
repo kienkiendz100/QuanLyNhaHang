@@ -16,10 +16,12 @@ public class MonAn {
     private String tenMon;
     private BigDecimal donGia;
     private String trangThai;
-
+    @Column(name = "anh")
+    private String anh;
     @ManyToOne
     @JoinColumn(name = "MaLoai")
     private LoaiMon loaiMon;
+
 
 
 }

@@ -1,8 +1,7 @@
 package com.kien.quanlynhahang.security;
 
 
-import com.kien.quanlynhahang.dto.ApiError;
-import jakarta.servlet.ServletException;
+import com.kien.quanlynhahang.exception.ApiError;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;

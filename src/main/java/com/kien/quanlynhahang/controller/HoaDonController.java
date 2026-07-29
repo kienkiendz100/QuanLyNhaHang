@@ -19,7 +19,7 @@ import java.util.List;
 
         @GetMapping
         public List<HoaDon> laytat(){
-            return hoaDonService.laytat();
+            return hoaDonService.layTatCa();
         }
 
     @GetMapping("/{maHD}")
