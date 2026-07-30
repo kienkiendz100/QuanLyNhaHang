@@ -18,18 +18,21 @@ import java.util.List;
 @RestController
 @RequestMapping("/monan")
 public class MonAnController {
-    private final MonAnService mas;
+    private final MonAnService monAnService;
     private final ObjectMapper objectMapper;
 
     @GetMapping
-    public List<MonAn> laytat(){
-        return mas.layTat();
+    public List<MonAn> laytat() {
+        return monAnService.layTat();
     }
 
-    @PostMapping(value = "/them", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public MonAn themMon(@RequestPart("monAn") String monAn,
-                         @RequestPart("file") MultipartFile file) throws IOException {
+    @PutMapping("/{id}")
+    public MonAn suaMon(
+            @PathVariable Integer id,
+            @RequestPart("monAn") MonAnDTO dto,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
 
-        MonAnDTO dto = objectMapper.readValue(monAn, MonAnDTO.class);
-        return mas.themMon(dto, file);
-    }}
+        return monAnService.capNhat(id, dto, file);
+
+    }
+}

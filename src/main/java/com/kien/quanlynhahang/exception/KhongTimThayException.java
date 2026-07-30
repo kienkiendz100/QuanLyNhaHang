@@ -1,7 +1,11 @@
 package com.kien.quanlynhahang.exception;
 
-public class KhongTimThayException extends  RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class KhongTimThayException extends BusinessException {
+
     public KhongTimThayException(String message) {
-        super(message);
+        super(HttpStatus.NOT_FOUND.value(), message);
     }
+
 }

@@ -20,7 +20,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MonAnService {
 
-
     private final MonAnRepository monAnRepository;
     private final LoaiMonRepository loaiMonRepository;
     private final FileService fileService;
@@ -29,9 +28,13 @@ public class MonAnService {
     public MonAn themMon(MonAnDTO dto, MultipartFile file) {
 
         kiemTraDuLieu(dto);
-        String tenFile = fileService.upload(file);
+
         MonAn monAn = taoMonAn(dto);
-        monAn.setAnh(tenFile);
+
+        if (file != null && !file.isEmpty()) {
+            monAn.setAnh(fileService.upload(file));
+        }
+
         return monAnRepository.save(monAn);
     }
 
@@ -45,13 +48,30 @@ public class MonAnService {
     }
 
     @CacheEvict(value = "monan", allEntries = true)
-    public MonAn sua(Integer maMon, MonAnDTO dto) {
-        MonAn monAn = timMonAn(maMon);
-        monAn.setTenMon(dto.getTenMon());
-        monAn.setDonGia(dto.getDonGia());
-        monAn.setLoaiMon(timLoaiMon(dto.getMaLoai()));
+    public MonAn capNhat(Integer maMon,
+                         MonAnDTO dto,
+                         MultipartFile file) {
 
-        return monAnRepository.save(monAn);
+        kiemTraDuLieu(dto);
+
+        MonAn monAn = timMonAn(maMon);
+
+        String anhCu = monAn.getAnh();
+        boolean coAnhMoi = file != null && !file.isEmpty();
+
+        if (coAnhMoi) {
+            monAn.setAnh(fileService.upload(file));
+        }
+
+        capNhatThongTin(monAn, dto);
+
+        MonAn ketQua = monAnRepository.save(monAn);
+
+        if (coAnhMoi && anhCu != null && !anhCu.isBlank()) {
+            fileService.delete(anhCu);
+        }
+
+        return ketQua;
     }
 
     @CacheEvict(value = "monan", allEntries = true)
@@ -60,24 +80,38 @@ public class MonAnService {
     }
 
     private MonAn taoMonAn(MonAnDTO dto) {
+
         MonAn monAn = new MonAn();
+
         monAn.setTenMon(dto.getTenMon());
         monAn.setDonGia(dto.getDonGia());
         monAn.setLoaiMon(timLoaiMon(dto.getMaLoai()));
         monAn.setTrangThai("Đang bán");
+
         return monAn;
     }
 
+    private void capNhatThongTin(MonAn monAn, MonAnDTO dto) {
+
+        monAn.setTenMon(dto.getTenMon());
+        monAn.setDonGia(dto.getDonGia());
+        monAn.setLoaiMon(timLoaiMon(dto.getMaLoai()));
+    }
+
     private void kiemTraDuLieu(MonAnDTO dto) {
+
         if (dto.getTenMon() == null || dto.getTenMon().isBlank()) {
             throw new NghiepVuException("Tên món không được để trống");
         }
+
         if (dto.getDonGia() == null) {
             throw new NghiepVuException("Đơn giá không được để trống");
         }
+
         if (dto.getDonGia().compareTo(BigDecimal.ZERO) <= 0) {
             throw new NghiepVuException("Đơn giá phải lớn hơn 0");
         }
+
         if (dto.getMaLoai() == null) {
             throw new NghiepVuException("Mã loại không được để trống");
         }
@@ -85,11 +119,13 @@ public class MonAnService {
 
     private MonAn timMonAn(Integer maMon) {
         return monAnRepository.findById(maMon)
-                .orElseThrow(() -> new KhongTimThayException("Không tìm thấy món ăn"));
+                .orElseThrow(() ->
+                        new KhongTimThayException("Không tìm thấy món ăn"));
     }
 
     private LoaiMon timLoaiMon(Integer maLoai) {
         return loaiMonRepository.findById(maLoai)
-                .orElseThrow(() -> new KhongTimThayException("Không tìm thấy loại món"));
+                .orElseThrow(() ->
+                        new KhongTimThayException("Không tìm thấy loại món"));
     }
 }

@@ -1,10 +1,11 @@
 package com.kien.quanlynhahang.service;
 
-import jakarta.mail.MessagingException;
+import com.kien.quanlynhahang.exception.GuiEmailException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,24 +13,28 @@ import org.springframework.stereotype.Service;
 public class EmailService {
 
     private final JavaMailSender javaMailSender;
+    @Async
+    public void guiEmail(String nguoiNhan,
+                         String tieuDe,
+                         String noiDung) {
 
-    public void sendEmail() throws MessagingException {
+        try {
 
-        MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessage message = javaMailSender.createMimeMessage();
 
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            MimeMessageHelper helper =
+                    new MimeMessageHelper(message, true, "UTF-8");
 
-        helper.setTo("user@gmail.com");
-        helper.setSubject("Xác thực Email");
+            helper.setTo(nguoiNhan);
 
-        helper.setText("""
-                <h1>Xin chào</h1>
+            helper.setSubject(tieuDe);
 
-                <a href="http://localhost:8080/verify">
-                    Xác thực tài khoản
-                </a>
-                """, true);
+            helper.setText(noiDung, true);
 
-        javaMailSender.send(message);
+            javaMailSender.send(message);
+
+        } catch (Exception e) {
+            throw new GuiEmailException("Gửi email thất bại");
+        }
     }
 }

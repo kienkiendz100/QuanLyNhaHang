@@ -1,8 +1,11 @@
 package com.kien.quanlynhahang.exception;
 
-public class BadRequestException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class BadRequestException extends BusinessException {
 
     public BadRequestException(String message) {
-        super(message);
+        super(HttpStatus.BAD_REQUEST.value(), message);
     }
+
 }

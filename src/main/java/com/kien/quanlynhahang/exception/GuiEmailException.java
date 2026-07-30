@@ -2,9 +2,9 @@ package com.kien.quanlynhahang.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class UploadFileException extends BusinessException {
+public class GuiEmailException extends BusinessException {
 
-    public UploadFileException(String message) {
+    public GuiEmailException(String message) {
         super(HttpStatus.INTERNAL_SERVER_ERROR.value(), message);
     }
 
