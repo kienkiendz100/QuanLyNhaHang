@@ -6,6 +6,7 @@ import com.kien.quanlynhahang.dto.JwtResponse;
 import com.kien.quanlynhahang.dto.LoginRequest;
 import com.kien.quanlynhahang.dto.LoginResponse;
 import com.kien.quanlynhahang.security.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,6 +25,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
+    @Operation(summary = "Xem hướng dẫn đăng nhập")
     @GetMapping("/login")
     public Map<String, String> huongDanLogin() {
         return Map.of("message",
@@ -31,6 +33,7 @@ public class AuthController {
         );
     }
 
+    @Operation(summary = "Đăng nhập và nhận token")
     @PostMapping("/login")
     public JwtResponse login(@Valid @RequestBody LoginRequest request) {
         authenticationManager.authenticate(

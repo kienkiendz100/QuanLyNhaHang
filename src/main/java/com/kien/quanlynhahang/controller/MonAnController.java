@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import com.kien.quanlynhahang.dto.MonAnDTO;
 import com.kien.quanlynhahang.entity.MonAn;
 import com.kien.quanlynhahang.service.MonAnService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,11 +22,13 @@ public class MonAnController {
     private final MonAnService monAnService;
     private final ObjectMapper objectMapper;
 
+    @Operation(summary = "Lấy danh sách món ăn")
     @GetMapping
     public List<MonAn> laytat() {
         return monAnService.layTat();
     }
 
+    @Operation(summary = "Cập nhật món ăn")
     @PutMapping("/{id}")
     public MonAn suaMon(
             @PathVariable Integer id,

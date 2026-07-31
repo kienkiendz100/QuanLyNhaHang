@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "datban")
+@Table(name = "DatBan")
 @Data
 public class DatBan {
     @Id
