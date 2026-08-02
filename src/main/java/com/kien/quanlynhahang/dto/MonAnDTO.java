@@ -20,10 +20,6 @@ public class MonAnDTO {
     @Positive(message = "Đơn giá phải lớn hơn 0")
     private BigDecimal donGia;
 
-    public void setGia(BigDecimal gia) {
-        this.donGia = gia;
-    }
-
     @Schema(description = "Mã loại món ăn", example = "1")
     @NotNull(message = "Mã loại không được để trống")
     private Integer maLoai;

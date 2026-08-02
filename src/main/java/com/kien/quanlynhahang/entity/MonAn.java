@@ -3,13 +3,15 @@ package com.kien.quanlynhahang.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
 @Entity
 @Table(name = "MonAn")
-public class MonAn {
+public class MonAn  implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer maMon;
@@ -21,7 +23,4 @@ public class MonAn {
     @ManyToOne
     @JoinColumn(name = "MaLoai")
     private LoaiMon loaiMon;
-
-
-
 }
