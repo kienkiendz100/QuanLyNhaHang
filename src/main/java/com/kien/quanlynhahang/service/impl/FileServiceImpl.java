@@ -2,6 +2,7 @@ package com.kien.quanlynhahang.service.impl;
 
 import com.kien.quanlynhahang.exception.UploadFileException;
 import com.kien.quanlynhahang.service.FileService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,6 +12,7 @@ import java.nio.file.*;
 import java.util.Set;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class FileServiceImpl implements FileService {
 
@@ -46,6 +48,10 @@ public class FileServiceImpl implements FileService {
             return fileName;
 
         } catch (IOException e) {
+            log.error("Upload file thất bại: originalName={}, uploadPath={}",
+                    file.getOriginalFilename(),
+                    uploadPath,
+                    e);
             throw new UploadFileException("Upload file thất bại");
         }
     }
@@ -64,6 +70,10 @@ public class FileServiceImpl implements FileService {
             );
 
         } catch (IOException e) {
+            log.error("Xóa file thất bại: fileName={}, uploadPath={}",
+                    fileName,
+                    uploadPath,
+                    e);
             throw new UploadFileException("Xóa file thất bại");
         }
     }

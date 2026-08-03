@@ -3,11 +3,13 @@ package com.kien.quanlynhahang.service;
 import com.kien.quanlynhahang.exception.GuiEmailException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmailService {
@@ -34,6 +36,10 @@ public class EmailService {
             javaMailSender.send(message);
 
         } catch (Exception e) {
+            log.error("Gửi email thất bại: nguoiNhan={}, tieuDe={}",
+                    nguoiNhan,
+                    tieuDe,
+                    e);
             throw new GuiEmailException("Gửi email thất bại");
         }
     }

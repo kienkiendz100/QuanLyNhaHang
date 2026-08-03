@@ -4,26 +4,37 @@ import com.kien.quanlynhahang.dto.MonAnDTO;
 import com.kien.quanlynhahang.entity.LoaiMon;
 import com.kien.quanlynhahang.entity.MonAn;
 import com.kien.quanlynhahang.exception.KhongTimThayException;
-import com.kien.quanlynhahang.exception.NghiepVuException;
+import com.kien.quanlynhahang.mapper.MonAnMapper;
 import com.kien.quanlynhahang.repository.LoaiMonRepository;
 import com.kien.quanlynhahang.repository.MonAnRepository;
+import com.kien.quanlynhahang.specification.MonAnSpecificationBuilder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
-import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MonAnService {
 
     private final MonAnRepository monAnRepository;
     private final LoaiMonRepository loaiMonRepository;
     private final FileService fileService;
+    private final MonAnMapper monAnMapper;
 
+    @Transactional
     @CacheEvict(value = "monan", allEntries = true)
     public MonAn themMon(MonAnDTO dto, MultipartFile file) {
 
@@ -36,16 +47,48 @@ public class MonAnService {
         return monAnRepository.save(monAn);
     }
 
-    @Cacheable("monan")
-    public List<MonAn> layTat() {
-        return monAnRepository.findAll();
-    }
+    @Cacheable(
+            value = "monan",
+            key = "#page+'-'+#size+'-'+#keyword+'-'+#maLoai+'-'+#giaTu+'-'+#giaDen+'-'+#trangThai+'-'+#sort+'-'+#direction")
+    public Page<MonAn> layTat(
+            int page,
+            int size,
+            String keyword,
+            Integer maLoai,
+            BigDecimal giaTu,
+            BigDecimal giaDen,
+            String trangThai,
+            String sort,
+            String direction) {
 
+        Sort sapXep = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sort).descending()
+                : Sort.by(sort).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sapXep);
+
+        if (!coDieuKienLoc(keyword, maLoai, giaTu, giaDen, trangThai)) {
+            return monAnRepository.findAll(pageable);
+        }
+
+        Specification<MonAn> specification =
+                MonAnSpecificationBuilder.build(
+                        keyword,
+                        maLoai,
+                        giaTu,
+                        giaDen,
+                        trangThai);
+
+        return monAnRepository.findAll(
+                specification,
+                pageable);
+    }
     @Cacheable(value = "monan", key = "#maMon")
     public MonAn layTheoMa(Integer maMon) {
         return timMonAn(maMon);
     }
 
+    @Transactional
     @CacheEvict(value = "monan", allEntries = true)
     public MonAn capNhat(Integer maMon,
                          MonAnDTO dto,
@@ -85,13 +128,21 @@ public class MonAnService {
         } catch (Exception e) {
 
             if (anhMoi != null) {
-                fileService.delete(anhMoi);
+                try {
+                    fileService.delete(anhMoi);
+                } catch (Exception cleanupException) {
+                    log.warn("Không thể xóa ảnh mới sau khi cập nhật món ăn thất bại: maMon={}, anhMoi={}",
+                            maMon,
+                            anhMoi,
+                            cleanupException);
+                }
             }
 
             throw e;
         }
     }
 
+    @Transactional
     @CacheEvict(value = "monan", allEntries = true)
     public void xoa(Integer maMon) {
 
@@ -110,10 +161,8 @@ public class MonAnService {
 
     private MonAn taoMonAn(MonAnDTO dto) {
 
-        MonAn monAn = new MonAn();
+        MonAn monAn = monAnMapper.toEntity(dto);
 
-        monAn.setTenMon(dto.getTenMon());
-        monAn.setDonGia(dto.getDonGia());
         monAn.setLoaiMon(timLoaiMon(dto.getMaLoai()));
         monAn.setTrangThai("Đang bán");
 
@@ -123,8 +172,7 @@ public class MonAnService {
 
     private void capNhatThongTin(MonAn monAn, MonAnDTO dto) {
 
-        monAn.setTenMon(dto.getTenMon());
-        monAn.setDonGia(dto.getDonGia());
+        monAnMapper.updateEntity(dto, monAn);
         monAn.setLoaiMon(timLoaiMon(dto.getMaLoai()));
 
     }
@@ -144,6 +192,20 @@ public class MonAnService {
                 .orElseThrow(() ->
                         new KhongTimThayException("Không tìm thấy loại món"));
 
+    }
+
+    private boolean coDieuKienLoc(
+            String keyword,
+            Integer maLoai,
+            BigDecimal giaTu,
+            BigDecimal giaDen,
+            String trangThai) {
+
+        return (keyword != null && !keyword.isBlank())
+                || maLoai != null
+                || giaTu != null
+                || giaDen != null
+                || (trangThai != null && !trangThai.isBlank());
     }
 
 }

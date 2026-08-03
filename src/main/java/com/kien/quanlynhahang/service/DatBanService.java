@@ -7,8 +7,15 @@ import com.kien.quanlynhahang.entity.DatBan;
 import com.kien.quanlynhahang.entity.KhachHang;
 import com.kien.quanlynhahang.repository.DatBanRepository;
 import com.kien.quanlynhahang.repository.KhachHangRepository;
+import com.kien.quanlynhahang.specification.DatBanSpecificationBuilder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -29,8 +36,48 @@ public class DatBanService {
         return dbr.save(db);
     }
 
-    public List<DatBan> laytat(){
-        return dbr.findAll();
+    public Page<DatBan> laytat(
+            int page,
+            int size,
+            LocalDate ngay,
+            Integer maKhuVuc,
+            Integer maBan,
+            String trangThai,
+            String sort,
+            String direction) {
+
+        Sort sapXep = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sort).descending()
+                : Sort.by(sort).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sapXep);
+
+        if (!coDieuKienLoc(ngay, maKhuVuc, maBan, trangThai)) {
+            return dbr.findAll(pageable);
+        }
+
+        Specification<DatBan> specification =
+                DatBanSpecificationBuilder.build(
+                        ngay,
+                        maKhuVuc,
+                        maBan,
+                        trangThai);
+
+        return dbr.findAll(
+                specification,
+                pageable);
+    }
+
+    private boolean coDieuKienLoc(
+            LocalDate ngay,
+            Integer maKhuVuc,
+            Integer maBan,
+            String trangThai) {
+
+        return ngay != null
+                || maKhuVuc != null
+                || maBan != null
+                || (trangThai != null && !trangThai.isBlank());
     }
 
     }

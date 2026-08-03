@@ -2,11 +2,10 @@ package com.kien.quanlynhahang.controller;
 
 import lombok.RequiredArgsConstructor;
 
+import com.kien.quanlynhahang.common.ApiResponse;
 import com.kien.quanlynhahang.dto.BanDTO;
 import com.kien.quanlynhahang.entity.Ban;
-import com.kien.quanlynhahang.entity.KhuVuc;
 import com.kien.quanlynhahang.repository.BanRepository;
-import com.kien.quanlynhahang.repository.KhuVucRepository;
 import com.kien.quanlynhahang.service.BanService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.*;
@@ -22,31 +21,61 @@ public class BanController {
 
     @Operation(summary = "Lấy danh sách bàn")
     @GetMapping
-    public List<Ban> laytatca(){
-        return banrp.findAll();
+    public ApiResponse<List<Ban>> laytatca(){
+        List<Ban> bans = banrp.findAll();
+
+        return ApiResponse.<List<Ban>>builder()
+                .success(true)
+                .message("Lấy danh sách bàn thành công")
+                .data(bans)
+                .build();
     }
 
     @Operation(summary = "Thêm bàn mới")
     @PostMapping
-    public Ban themban(@RequestBody BanDTO dto){
-        return bansv.themban(dto);
+    public ApiResponse<Ban> themban(@RequestBody BanDTO dto){
+        Ban ban = bansv.themban(dto);
+
+        return ApiResponse.<Ban>builder()
+                .success(true)
+                .message("Thêm bàn thành công")
+                .data(ban)
+                .build();
     }
 
     @Operation(summary = "Lấy danh sách bàn theo trạng thái")
     @GetMapping("/trangthai/{trangThai}")
-    public List<Ban> laybantheotrangthai(@PathVariable String trangThai) {
-        return bansv.laybantheotrangthai(trangThai);
+    public ApiResponse<List<Ban>> laybantheotrangthai(@PathVariable String trangThai) {
+        List<Ban> bans = bansv.laybantheotrangthai(trangThai);
+
+        return ApiResponse.<List<Ban>>builder()
+                .success(true)
+                .message("Lấy danh sách bàn theo trạng thái thành công")
+                .data(bans)
+                .build();
     }
 
     @Operation(summary = "Tìm bàn theo sức chứa")
     @GetMapping("/ducho/{songuoi}")
-    public List<Ban> timbanducho (@PathVariable Integer songuoi){
-        return bansv.timbanducho(songuoi);
+    public ApiResponse<List<Ban>> timbanducho (@PathVariable Integer songuoi){
+        List<Ban> bans = bansv.timbanducho(songuoi);
+
+        return ApiResponse.<List<Ban>>builder()
+                .success(true)
+                .message("Tìm bàn theo sức chứa thành công")
+                .data(bans)
+                .build();
     }
 
     @Operation(summary = "Tìm bàn trống đủ chỗ")
     @GetMapping("timban")
-    public List<Ban> timban (@RequestParam Integer songuoi){
-        return bansv.timbantrongducho(songuoi);
+    public ApiResponse<List<Ban>> timban (@RequestParam Integer songuoi){
+        List<Ban> bans = bansv.timbantrongducho(songuoi);
+
+        return ApiResponse.<List<Ban>>builder()
+                .success(true)
+                .message("Tìm bàn trống đủ chỗ thành công")
+                .data(bans)
+                .build();
     }
 }

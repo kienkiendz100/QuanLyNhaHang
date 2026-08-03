@@ -2,15 +2,16 @@ package com.kien.quanlynhahang.controller;
 
 import lombok.RequiredArgsConstructor;
 
+import com.kien.quanlynhahang.common.ApiResponse;
 import com.kien.quanlynhahang.dto.HoaDonDTO;
-import com.kien.quanlynhahang.dto.ThemMonDTO;
 import com.kien.quanlynhahang.entity.HoaDon;
 import com.kien.quanlynhahang.service.HoaDonService;
 import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.time.LocalDate;
 
 @RequiredArgsConstructor
 @RestController
@@ -20,27 +21,69 @@ import java.util.List;
 
         @Operation(summary = "Lấy danh sách hóa đơn")
         @GetMapping
-        public List<HoaDon> laytat(){
-            return hoaDonService.layTatCa();
+        public ApiResponse<Page<HoaDon>> laytat(
+                @RequestParam(defaultValue = "0") int page,
+                @RequestParam(defaultValue = "10") int size,
+                @RequestParam(required = false)
+                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate tuNgay,
+                @RequestParam(required = false)
+                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate denNgay,
+                @RequestParam(required = false) Integer maKH,
+                @RequestParam(required = false) String trangThai,
+                @RequestParam(defaultValue = "maHD") String sort,
+                @RequestParam(defaultValue = "asc") String direction) {
+
+            Page<HoaDon> hoaDons = hoaDonService.layTatCa(
+                    page,
+                    size,
+                    tuNgay,
+                    denNgay,
+                    maKH,
+                    trangThai,
+                    sort,
+                    direction);
+
+            return ApiResponse.<Page<HoaDon>>builder()
+                    .success(true)
+                    .message("Lấy danh sách hóa đơn thành công")
+                    .data(hoaDons)
+                    .build();
         }
 
     @Operation(summary = "Lấy hóa đơn theo mã")
     @GetMapping("/{maHD}")
-    public ResponseEntity<HoaDon> layTheoId(@PathVariable Integer maHD) {
-        HoaDon hd = hoaDonService.layTheoId(maHD);
-        return ResponseEntity.ok(hd);
+    public ApiResponse<HoaDon> layTheoId(@PathVariable Integer maHD) {
+        HoaDon hoaDon = hoaDonService.layTheoId(maHD);
+
+        return ApiResponse.<HoaDon>builder()
+                .success(true)
+                .message("Lấy hóa đơn thành công")
+                .data(hoaDon)
+                .build();
     }
 
         @Operation(summary = "Tạo hóa đơn")
         @PostMapping
-        public HoaDon them(@RequestBody HoaDonDTO dto) {
-            return hoaDonService.them(dto);
+        public ApiResponse<HoaDon> them(@RequestBody HoaDonDTO dto) {
+            HoaDon hoaDon = hoaDonService.them(dto);
+
+            return ApiResponse.<HoaDon>builder()
+                    .success(true)
+                    .message("Tạo hóa đơn thành công")
+                    .data(hoaDon)
+                    .build();
         }
 
         @Operation(summary = "Thanh toán hóa đơn")
         @PutMapping("/{maHD}/thanhtoan")
-         public HoaDon thanhToan(@PathVariable Integer maHD) {
-            return hoaDonService.thanhToan(maHD);
+         public ApiResponse<HoaDon> thanhToan(@PathVariable Integer maHD) {
+            HoaDon hoaDon = hoaDonService.thanhToan(maHD);
+
+            return ApiResponse.<HoaDon>builder()
+                    .success(true)
+                    .message("Thanh toán hóa đơn thành công")
+                    .data(hoaDon)
+                    .build();
     }
 
     }

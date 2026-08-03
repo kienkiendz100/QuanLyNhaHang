@@ -13,6 +13,7 @@ import com.kien.quanlynhahang.repository.ChiTietHoaDonRepository;
 import com.kien.quanlynhahang.repository.HoaDonRepository;
 import com.kien.quanlynhahang.repository.MonAnRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,7 @@ import java.util.Optional;
         private final MonAnRepository mar;
         private final HoaDonService hds;
 
+        @Transactional
         public ChiTietHoaDon themMon(Integer maHD, ThemMonDTO dto) {
 
           HoaDon hd =  timHoaDon(maHD);
@@ -61,6 +63,7 @@ import java.util.Optional;
             return ketQua;
         }
 
+    @Transactional
     public void xoaMon(Integer maHD, Integer maMon) {
         ChiTietHoaDon ct = timChiTiet(maHD, maMon);
         kiemTraHoaDon(ct.getHoaDon());
@@ -69,6 +72,7 @@ import java.util.Optional;
         hds.capNhatTongTien(hoaDon);
     }
 
+    @Transactional
     public ChiTietHoaDon capNhatSoLuong(Integer maHD, Integer maMon, CapNhatSoLuongDTO dto) {
         if (dto.getSoLuong() <= 0) {
             throw new NghiepVuException("Số lượng phải lớn hơn 0");

@@ -8,5 +8,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class LoginResponse {
     @Schema(description = "JWT token đăng nhập", example = "eyJhbGciOiJIUzI1NiJ9...")
-    private String token;
+    private String accessToken;
 }

@@ -2,6 +2,7 @@ package com.kien.quanlynhahang.controller;
 
 import lombok.RequiredArgsConstructor;
 
+import com.kien.quanlynhahang.common.ApiResponse;
 import com.kien.quanlynhahang.dto.NguoiDungDTO;
 import com.kien.quanlynhahang.entity.NguoiDung;
 import com.kien.quanlynhahang.service.NguoiDungService;
@@ -19,7 +20,13 @@ public class NguoiDungController {
 
     @Operation(summary = "Thêm người dùng")
     @PostMapping
-    public NguoiDung them(@RequestBody NguoiDungDTO dto) {
-        return nguoiDungService.them(dto);
+    public ApiResponse<NguoiDung> them(@RequestBody NguoiDungDTO dto) {
+        NguoiDung nguoiDung = nguoiDungService.them(dto);
+
+        return ApiResponse.<NguoiDung>builder()
+                .success(true)
+                .message("Thêm người dùng thành công")
+                .data(nguoiDung)
+                .build();
     }
 }
