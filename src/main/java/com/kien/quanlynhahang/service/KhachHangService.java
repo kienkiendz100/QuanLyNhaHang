@@ -17,6 +17,7 @@ public class KhachHangService {
         KhachHang  kh = new KhachHang();
         kh.setHoTen(dto.getHoTen());
         kh.setSdt(dto.getSdt());
+        kh.setEmail(dto.getEmail());
         kh.setDiemTichLuy(0);
         return khrp.save(kh);
     }

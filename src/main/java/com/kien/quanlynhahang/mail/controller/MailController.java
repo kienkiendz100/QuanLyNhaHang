@@ -1,4 +1,4 @@
-package com.kien.quanlynhahang.controller;
+package com.kien.quanlynhahang.mail.controller;
 
 import com.kien.quanlynhahang.service.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +19,7 @@ public class MailController {
     public String test() {
 
         emailService.guiEmail(
-                "kienupsu2@gmail.com",
+                "daominh110905@gmail.com",
                 "Test Spring Mail",
                 "<h2>Hello Spring Boot</h2>"
         );

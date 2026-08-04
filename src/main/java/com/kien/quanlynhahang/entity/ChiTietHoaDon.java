@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @Table(name = "ChiTietHoaDon")
 public class ChiTietHoaDon {
     @EmbeddedId
-    private ChiTietHoaDonId id;
+    private ChiTietHoaDonId id = new ChiTietHoaDonId();
 
     @ManyToOne
     @MapsId("maHD")
@@ -21,6 +21,7 @@ public class ChiTietHoaDon {
     @MapsId("maMon")
     @JoinColumn(name = "MaMon")
     private MonAn monAn;
+
     private Integer soLuong;
     private BigDecimal donGia;
     private BigDecimal thanhTien;

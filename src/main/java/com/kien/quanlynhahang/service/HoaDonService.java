@@ -1,7 +1,14 @@
 package com.kien.quanlynhahang.service;
 
+import com.kien.quanlynhahang.dto.ChiTietHoaDonDTO;
+import com.kien.quanlynhahang.entity.MonAn;
+import com.kien.quanlynhahang.id.ChiTietHoaDonId;
+import com.kien.quanlynhahang.mail.service.MailService;
+import com.kien.quanlynhahang.repository.MonAnRepository;
 import lombok.RequiredArgsConstructor;
 import com.kien.quanlynhahang.dto.HoaDonDTO;
+import java.text.NumberFormat;
+import java.util.Locale;
 import com.kien.quanlynhahang.entity.ChiTietHoaDon;
 import com.kien.quanlynhahang.entity.HoaDon;
 import com.kien.quanlynhahang.entity.KhachHang;
@@ -32,6 +39,8 @@ public class HoaDonService {
     private final KhachHangRepository khachHangRepository;
     private final ChiTietHoaDonRepository chiTietHoaDonRepository;
     private final HoaDonMapper hoaDonMapper;
+    private final MailService mailService;
+    private final MonAnRepository  monAnRepository;
 
     public Page<HoaDon> layTatCa(
             int page,
@@ -73,15 +82,93 @@ public class HoaDonService {
     public HoaDon them(HoaDonDTO dto) {
         KhachHang kh = timKhachHang(dto.getMaKH());
 
+        if (dto.getChiTietHoaDons() == null || dto.getChiTietHoaDons().isEmpty()) {
+            throw new NghiepVuException("Hóa đơn phải có ít nhất 1 món");
+        }
+
         HoaDon hoaDon = hoaDonMapper.toEntity(dto);
         hoaDon.setKhachHang(kh);
         hoaDon.setNgayLap(LocalDateTime.now());
         hoaDon.setTongTien(BigDecimal.ZERO);
         hoaDon.setTrangThai("Chưa thanh toán");
 
-        return hoaDonRepository.save(hoaDon);
-    }
+        // Lưu hóa đơn trước để lấy MaHD
+        hoaDon = hoaDonRepository.save(hoaDon);
 
+        BigDecimal tongTien = BigDecimal.ZERO;
+
+        for (ChiTietHoaDonDTO item : dto.getChiTietHoaDons()) {
+            MonAn monAn = monAnRepository.findById(item.getMaMon())
+                    .orElseThrow(() -> new KhongTimThayException("Không tìm thấy món"));
+
+            ChiTietHoaDon ct = new ChiTietHoaDon();
+            ct.setId(new ChiTietHoaDonId());
+
+            ct.setHoaDon(hoaDon);
+            ct.setMonAn(monAn);
+            ct.setSoLuong(item.getSoLuong());
+            ct.setDonGia(monAn.getDonGia());
+
+            BigDecimal thanhTien = monAn.getDonGia()
+                    .multiply(BigDecimal.valueOf(item.getSoLuong()));
+
+            ct.setThanhTien(thanhTien);
+
+            chiTietHoaDonRepository.save(ct);
+            tongTien = tongTien.add(thanhTien);
+        }
+
+        // Cập nhật tổng tiền
+        hoaDon.setTongTien(tongTien);
+        hoaDon = hoaDonRepository.save(hoaDon);
+
+        // Gửi mail sau khi đã có đủ dữ liệu
+        if (hoaDon.getKhachHang() != null
+                && hoaDon.getKhachHang().getEmail() != null
+                && !hoaDon.getKhachHang().getEmail().isBlank()) {
+            NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
+            String tongTienFormat = formatter.format(hoaDon.getTongTien());
+            String html = """
+                <h2>🍽 Nhà hàng 5 sao Hà Nội</h2>
+                <hr>
+                <p>Xin chào thượng đế yêu quý  <b>%s</b>,</p>
+                <p>Hóa đơn của bạn đã được tạo thành công.</p>
+                <table border="1" cellpadding="8" cellspacing="0">
+                    <tr>
+                        <td>Mã hóa đơn</td>
+                        <td>%d</td>
+                    </tr>
+                    <tr>
+                        <td>Tổng tiền</td>
+                        <td>%s VNĐ</td>
+                    </tr>
+                    <tr>
+                        <td>Trạng thái</td>
+                        <td>%s</td>
+                    </tr>
+           
+                </table>
+                <br>
+                <p>STK : 1518052005 MB nguyễn trung kiên</p>
+                <br>
+                
+                <p>Cảm ơn quý khách đã sử dụng dịch vụ của <b>Nhà hàng của chúng tôi</b>!</p>
+                """
+                    .formatted(
+                            hoaDon.getKhachHang().getHoTen(),
+                            hoaDon.getMaHD(),
+                            tongTienFormat,
+                            hoaDon.getTrangThai()
+                    );
+            mailService.guiMailHtml(
+                    hoaDon.getKhachHang().getEmail(),
+                    "Xác nhận hóa đơn",
+                    html
+            );
+        }
+
+        return hoaDon;
+    }
     @Transactional
     public void capNhatTongTien(HoaDon hoaDon) {
         List<ChiTietHoaDon> ds = chiTietHoaDonRepository.findByHoaDon(hoaDon);

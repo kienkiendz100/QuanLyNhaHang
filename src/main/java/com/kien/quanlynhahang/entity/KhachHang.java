@@ -12,5 +12,6 @@ public class KhachHang {
     private Integer maKH;
     private String hoTen;
     private String sdt;
+    private String email;
     private Integer diemTichLuy;
 }
