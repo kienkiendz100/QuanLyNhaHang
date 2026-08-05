@@ -1,4 +1,4 @@
-package com.kien.quanlynhahang.dto;
+package com.kien.quanlynhahang.dto.reponse;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

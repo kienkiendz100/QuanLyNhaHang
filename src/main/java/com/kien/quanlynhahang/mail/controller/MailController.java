@@ -14,9 +14,9 @@ public class MailController {
 
     private final EmailService emailService;
 
-    @Operation(summary = "Gửi email kiểm thử")
-    @GetMapping("/test")
-    public String test() {
+    @Operation(summary = "Gửi email ")
+    @GetMapping("/mail")
+    public String mail() {
 
         emailService.guiEmail(
                 "daominh110905@gmail.com",

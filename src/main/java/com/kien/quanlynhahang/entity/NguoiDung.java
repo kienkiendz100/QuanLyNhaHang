@@ -2,6 +2,8 @@ package com.kien.quanlynhahang.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Entity
 @Table(name = "NguoiDung")
@@ -14,4 +16,9 @@ public class NguoiDung {
     private String tenDangNhap;
     private String matKhau;
     private String vaiTro;
+
+    @Column(unique = true)
+    private String email;
+    @OneToMany(mappedBy = "nguoiDung")
+    private List<RefreshToken> refreshTokens;
 }
