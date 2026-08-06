@@ -15,7 +15,7 @@ public class MailService {
     private final JavaMailSender mailSender;
 
     @Async
-    public void guiMailHtml(String to,
+    public void guiMail(String to,
                             String subject,
                             String html) {
 
@@ -40,6 +40,17 @@ public class MailService {
 
         }
 
+    }
+    public void sendOtp(String email, String otp) {
+
+        String subject = "Mã OTP đặt lại mật khẩu";
+
+        String html = """
+            <h2>Mã OTP của bạn là: %s</h2>
+            <p>OTP có hiệu lực trong 5 phút.</p>
+            """.formatted(otp);
+
+        guiMail(email, subject, html);
     }
 
 }

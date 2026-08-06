@@ -1,21 +1,17 @@
-package com.kien.quanlynhahang.controller;
+package com.kien.quanlynhahang.auth;
 
 import com.kien.quanlynhahang.dto.reponse.MeResponse;
 import com.kien.quanlynhahang.dto.reponse.RefreshTokenResponse;
 import com.kien.quanlynhahang.dto.request.*;
 import com.kien.quanlynhahang.entity.NguoiDung;
 import com.kien.quanlynhahang.repository.NguoiDungRepository;
-import com.kien.quanlynhahang.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import com.kien.quanlynhahang.common.ApiResponse;
 import com.kien.quanlynhahang.dto.reponse.LoginResponse;
-import com.kien.quanlynhahang.security.JwtService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,6 +48,7 @@ public class AuthController {
                 .data(new MeResponse(
                         nguoiDung.getMaND(),
                         nguoiDung.getTenDangNhap(),
+                        nguoiDung.getEmail(),
                         nguoiDung.getVaiTro()))
                 .build();
     }

@@ -1,4 +1,4 @@
-package com.kien.quanlynhahang.service;
+package com.kien.quanlynhahang.auth;
 
 
 import com.kien.quanlynhahang.dto.reponse.LoginResponse;
@@ -9,13 +9,17 @@ import com.kien.quanlynhahang.dto.request.RefreshTokenRequest;
 import com.kien.quanlynhahang.entity.NguoiDung;
 import com.kien.quanlynhahang.entity.Otp;
 import com.kien.quanlynhahang.entity.RefreshToken;
+import com.kien.quanlynhahang.exception.BusinessException;
 import com.kien.quanlynhahang.mail.service.MailService;
 import com.kien.quanlynhahang.repository.NguoiDungRepository;
+import com.kien.quanlynhahang.repository.OtpRepository;
 import com.kien.quanlynhahang.repository.RefreshTokenRepository;
 import com.kien.quanlynhahang.security.JwtService;
 import lombok.RequiredArgsConstructor;
+import com.kien.quanlynhahang.dto.request.ResetPasswordRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,6 +34,8 @@ public class AuthService {
     private final NguoiDungRepository nguoiDungRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final MailService mailService;
+    private final OtpRepository otpRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public LoginResponse login(LoginRequest request) {
 
@@ -66,14 +72,14 @@ public class AuthService {
 
         RefreshToken token = refreshTokenRepository
                 .findByToken(request.getRefreshToken())
-                .orElseThrow(() -> new RuntimeException("Refresh Token không tồn tại"));
+                .orElseThrow(() -> new BusinessException(404, "Refresh Token không tồn tại"));
 
         if (Boolean.TRUE.equals(token.getRevoked())) {
-            throw new RuntimeException("Refresh Token đã bị thu hồi");
+            throw new BusinessException(400, "Refresh Token đã bị thu hồi");
         }
 
         if (token.getExpiredAt().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Refresh Token đã hết hạn");
+            throw new BusinessException(400, "Refresh Token đã hết hạn");
         }
 
         String accessToken =
@@ -86,7 +92,8 @@ public class AuthService {
 
         RefreshToken refreshToken = refreshTokenRepository
                 .findByToken(request.getRefreshToken())
-                .orElseThrow(() -> new RuntimeException("Refresh Token không tồn tại"));
+         .orElseThrow(() -> new BusinessException(404, "Refresh Token không tồn tại"));
+
 
         refreshToken.setRevoked(true);
 
@@ -105,9 +112,8 @@ public class AuthService {
         NguoiDung nguoiDung =
                 nguoiDungRepository
                         .findByEmail(request.getEmail())
-                        .orElseThrow(
-                                ()->new RuntimeException("Email không tồn tại")
-                        );
+                        .orElseThrow(() -> new BusinessException(404, "Email không tồn tại"));
+
 
         String otp = generateOtp();
 
@@ -119,53 +125,37 @@ public class AuthService {
 
         otpRepository.save(entity);
 
-        mailService.sendOtp(
-                request.getEmail(),
-                otp
-        );
+        mailService.sendOtp(request.getEmail(), otp);
 
     }
-    public void resetPassword(ResetPasswordRequest request){
+    public void resetPassword(ResetPasswordRequest request) {
 
-        Otp otp =
-                otpRepository
-                        .findTopByEmailOrderByIdDesc(request.getEmail())
-                        .orElseThrow();
+        Otp otp = otpRepository
+                .findTopByEmailOrderByIdDesc(request.getEmail())
+                .orElseThrow(() -> new BusinessException(404, "Không tìm thấy OTP"));
 
-        if(otp.getUsed()){
-
-            throw new RuntimeException("OTP đã được sử dụng");
-
+        if (otp.getUsed()) {
+            throw new BusinessException(400, "OTP đã được sử dụng");
         }
 
-        if(otp.getExpiredAt().isBefore(LocalDateTime.now())){
-
-            throw new RuntimeException("OTP hết hạn");
-
+        if (otp.getExpiredAt().isBefore(LocalDateTime.now())) {
+            throw new BusinessException(400, "OTP hết hạn");
         }
 
-        if(!otp.getOtp().equals(request.getOtp())){
-
-            throw new RuntimeException("OTP không đúng");
-
+        if (!otp.getOtp().equals(request.getOtp())) {
+            throw new BusinessException(400, "OTP không đúng");
         }
 
-        NguoiDung nguoiDung =
-                nguoiDungRepository
-                        .findByEmail(request.getEmail())
-                        .orElseThrow();
+        NguoiDung nguoiDung = nguoiDungRepository
+                .findByEmail(request.getEmail())
+                .orElseThrow(() -> new BusinessException(404, "Không tìm thấy người dùng"));
 
         nguoiDung.setMatKhau(
-                passwordEncoder.encode(
-                        request.getNewPassword()
-                )
+                passwordEncoder.encode(request.getNewPassword())
         );
 
         nguoiDungRepository.save(nguoiDung);
 
         otp.setUsed(true);
-
         otpRepository.save(otp);
-
-    }
-}
+    }}

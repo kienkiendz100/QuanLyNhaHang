@@ -79,7 +79,27 @@ public class DatBanService {
                 || maBan != null
                 || (trangThai != null && !trangThai.isBlank());
     }
+    public DatBan layChiTiet(Integer id) {
+        return dbr.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đặt bàn"));
+    }
+    public DatBan huyDatBan(Integer id) {
 
+        DatBan datBan = dbr.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đặt bàn"));
+
+        if ("Đã hủy".equals(datBan.getTrangThai())) {
+            throw new RuntimeException("Đặt bàn đã được hủy");
+        }
+
+        if ("Hoàn thành".equals(datBan.getTrangThai())) {
+            throw new RuntimeException("Không thể hủy đặt bàn đã hoàn thành");
+        }
+
+        datBan.setTrangThai("Đã hủy");
+
+        return dbr.save(datBan);
+    }
     }
 
 

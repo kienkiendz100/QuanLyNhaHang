@@ -18,6 +18,8 @@ public class MonAn  implements Serializable {
     private String tenMon;
     private BigDecimal donGia;
     private String trangThai;
+
+
     @Column(name = "anh")
     private String anh;
     @ManyToOne

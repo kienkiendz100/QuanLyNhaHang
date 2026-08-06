@@ -1,7 +1,7 @@
 package com.kien.quanlynhahang.dashboard.controller;
 
 import com.kien.quanlynhahang.common.ApiResponse;
-import com.kien.quanlynhahang.dashboard.dto.DashboardDTO;
+import com.kien.quanlynhahang.dashboard.dto.*;
 import com.kien.quanlynhahang.dashboard.service.DashboardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,6 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/dashboard")
@@ -70,6 +71,48 @@ public class DashboardController {
         return ApiResponse.success(
                 "Lấy dashboard thành công",
                 dashboardService.dashboard(tuNgay, denNgay)
+        );
+    }
+    @GetMapping("/revenue")
+    public ApiResponse<DoanhThuDTO> revenue(
+
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate tuNgay,
+
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate denNgay) {
+
+        return ApiResponse.success(
+                "Lấy doanh thu thành công",
+                dashboardService.revenue(tuNgay, denNgay)
+        );
+    }
+    @GetMapping("/top-selling")
+    public ApiResponse<List<TopMonDTO>> topSelling() {
+
+        return ApiResponse.success(
+                "Lấy top món bán chạy thành công",
+                dashboardService.topSelling()
+        );
+    }
+    @GetMapping("/monthly")
+    public ApiResponse<List<DoanhThuThangDTO>> monthly(
+
+            @RequestParam Integer nam) {
+
+        return ApiResponse.success(
+                "Lấy doanh thu theo tháng thành công",
+                dashboardService.monthly(nam)
+        );
+    }
+    @GetMapping("/customer")
+    public ApiResponse<ThongKeKhachHangDTO> customer() {
+
+        return ApiResponse.success(
+                "Lấy thống kê khách hàng thành công",
+                dashboardService.customer()
         );
     }
 }

@@ -9,6 +9,7 @@ import com.kien.quanlynhahang.service.HoaDonService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -18,7 +19,6 @@ import java.time.LocalDate;
     @RequestMapping("/hoadon")
     public class HoaDonController {
         private final HoaDonService hoaDonService;
-
         @Operation(summary = "Lấy danh sách hóa đơn")
         @GetMapping
         public ApiResponse<Page<HoaDon>> laytat(
@@ -86,6 +86,33 @@ import java.time.LocalDate;
                     .build();
     }
 
+
+
+
+        @GetMapping("/date")
+        public ResponseEntity<?> timTheoNgay(
+                @RequestParam LocalDate from,
+                @RequestParam LocalDate to
+        ) {
+            return ResponseEntity.ok(hoaDonService.timTheoNgay(from, to));
+        }
+
+        @GetMapping("/status/{status}")
+        public ResponseEntity<?> timTheoTrangThai(@PathVariable String status) {
+            return ResponseEntity.ok(hoaDonService.timTheoTrangThai(status));
+        }
+
+        @GetMapping("/khachhang/{id}")
+        public ResponseEntity<?> timTheoKhachHang(@PathVariable Integer id) {
+            return ResponseEntity.ok(hoaDonService.timTheoKhachHang(id));
+        }
+
+        @PutMapping("/{id}/cancel")
+        public ResponseEntity<?> huyHoaDon(@PathVariable Integer id) {
+            return ResponseEntity.ok(hoaDonService.huyHoaDon(id));
+        }
     }
+
+
 
 

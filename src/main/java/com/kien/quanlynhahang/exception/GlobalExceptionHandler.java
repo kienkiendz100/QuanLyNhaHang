@@ -80,7 +80,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> xuLyLoiHeThong(Exception ex) {
-
+        ex.printStackTrace();
         log.error("Lỗi hệ thống chưa xử lý", ex);
 
         ApiResponse<Void> response = ApiResponse.<Void>builder()

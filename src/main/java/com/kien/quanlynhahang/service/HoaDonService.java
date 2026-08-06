@@ -160,7 +160,7 @@ public class HoaDonService {
                             tongTienFormat,
                             hoaDon.getTrangThai()
                     );
-            mailService.guiMailHtml(
+            mailService.guiMail(
                     hoaDon.getKhachHang().getEmail(),
                     "Xác nhận hóa đơn",
                     html
@@ -168,6 +168,32 @@ public class HoaDonService {
         }
 
         return hoaDon;
+    }
+    public List<HoaDon> timTheoNgay(LocalDate from, LocalDate to) {
+        return hoaDonRepository.findByNgayLapBetween(
+                from.atStartOfDay(),
+                to.plusDays(1).atStartOfDay().minusNanos(1)
+        );
+    }
+
+    public List<HoaDon> timTheoTrangThai(String trangThai) {
+        return hoaDonRepository.findByTrangThai(trangThai);
+    }
+
+    public List<HoaDon> timTheoKhachHang(Integer maKH) {
+        return hoaDonRepository.findByKhachHang_MaKH(maKH);
+    }
+
+    @Transactional
+    public HoaDon huyHoaDon(Integer maHD) {
+        HoaDon hoaDon = timHoaDon(maHD);
+
+        if ("Đã thanh toán".equals(hoaDon.getTrangThai())) {
+            throw new NghiepVuException("Không thể hủy hóa đơn đã thanh toán");
+        }
+
+        hoaDon.setTrangThai("Đã hủy");
+        return hoaDonRepository.save(hoaDon);
     }
     @Transactional
     public void capNhatTongTien(HoaDon hoaDon) {

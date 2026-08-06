@@ -1,5 +1,8 @@
 package com.kien.quanlynhahang.controller;
 
+import com.kien.quanlynhahang.dto.CapNhatTrangThaiBanDTO;
+import com.kien.quanlynhahang.entity.enums.TrangThaiBan;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import com.kien.quanlynhahang.common.ApiResponse;
@@ -16,13 +19,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/ban")
 public class BanController {
-    private final BanRepository banrp;
-    private final BanService bansv;
+    private final BanRepository banRepository;
+    private final BanService banService;
 
     @Operation(summary = "Lấy danh sách bàn")
     @GetMapping
     public ApiResponse<List<Ban>> laytatca(){
-        List<Ban> bans = banrp.findAll();
+        List<Ban> bans = banRepository.findAll();
 
         return ApiResponse.<List<Ban>>builder()
                 .success(true)
@@ -34,7 +37,7 @@ public class BanController {
     @Operation(summary = "Thêm bàn mới")
     @PostMapping
     public ApiResponse<Ban> themban(@RequestBody BanDTO dto){
-        Ban ban = bansv.themban(dto);
+        Ban ban = banService.themban(dto);
 
         return ApiResponse.<Ban>builder()
                 .success(true)
@@ -44,9 +47,11 @@ public class BanController {
     }
 
     @Operation(summary = "Lấy danh sách bàn theo trạng thái")
-    @GetMapping("/trangthai/{trangThai}")
-    public ApiResponse<List<Ban>> laybantheotrangthai(@PathVariable String trangThai) {
-        List<Ban> bans = bansv.laybantheotrangthai(trangThai);
+    @GetMapping("/trangthai")
+    public ApiResponse<List<Ban>> layTheoTrangThai(
+            @RequestParam TrangThaiBan status) {
+
+        List<Ban> bans = banService.laybantheotrangthai(status);
 
         return ApiResponse.<List<Ban>>builder()
                 .success(true)
@@ -58,7 +63,7 @@ public class BanController {
     @Operation(summary = "Tìm bàn theo sức chứa")
     @GetMapping("/ducho/{songuoi}")
     public ApiResponse<List<Ban>> timbanducho (@PathVariable Integer songuoi){
-        List<Ban> bans = bansv.timbanducho(songuoi);
+        List<Ban> bans = banService.timbanducho(songuoi);
 
         return ApiResponse.<List<Ban>>builder()
                 .success(true)
@@ -70,12 +75,25 @@ public class BanController {
     @Operation(summary = "Tìm bàn trống đủ chỗ")
     @GetMapping("timban")
     public ApiResponse<List<Ban>> timban (@RequestParam Integer songuoi){
-        List<Ban> bans = bansv.timbantrongducho(songuoi);
+        List<Ban> bans = banService.timbantrongducho(songuoi);
 
         return ApiResponse.<List<Ban>>builder()
                 .success(true)
                 .message("Tìm bàn trống đủ chỗ thành công")
                 .data(bans)
+                .build();
+    }
+    @PutMapping("/{id}/status")
+    @Operation(summary = "Cập nhật trạng thái bàn")
+    public ApiResponse<BanDTO> capNhatTrangThai(
+            @PathVariable Integer id,
+            @Valid @RequestBody CapNhatTrangThaiBanDTO request) {
+
+        BanDTO banDTO = banService.capNhatTrangThai(id, request.getStatus());
+
+        return ApiResponse.<BanDTO>builder()
+                .message("Cập nhật trạng thái bàn thành công")
+                .data(banDTO)
                 .build();
     }
 }

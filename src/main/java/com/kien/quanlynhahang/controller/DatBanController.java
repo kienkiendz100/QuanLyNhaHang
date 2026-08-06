@@ -17,12 +17,12 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("/datban")
 public class DatBanController {
-    private final DatBanService dbsv;
+    private final DatBanService datBanService;
 
     @Operation(summary = "Tạo đặt bàn")
     @PostMapping
     public ApiResponse<DatBan> them(@RequestBody DatBanDTO dto){
-        DatBan datBan = dbsv.them(dto);
+        DatBan datBan = datBanService.them(dto);
 
         return ApiResponse.<DatBan>builder()
                 .success(true)
@@ -44,7 +44,7 @@ public class DatBanController {
             @RequestParam(defaultValue = "maDatBan") String sort,
             @RequestParam(defaultValue = "asc") String direction) {
 
-        Page<DatBan> datBans = dbsv.laytat(
+        Page<DatBan> datBans = datBanService.laytat(
                 page,
                 size,
                 ngay,
@@ -58,6 +58,22 @@ public class DatBanController {
                 .success(true)
                 .message("Lấy danh sách đặt bàn thành công")
                 .data(datBans)
+                .build();
+    }
+    @GetMapping("/{id}")
+    public ApiResponse<DatBan> layChiTiet(@PathVariable Integer id) {
+        return ApiResponse.<DatBan>builder()
+                .success(true)
+                .message("Lấy chi tiết đặt bàn thành công")
+                .data(datBanService.layChiTiet(id))
+                .build();
+    }
+    @PutMapping("/{id}/cancel")
+    public ApiResponse<DatBan> huyDatBan(@PathVariable Integer id) {
+        return ApiResponse.<DatBan>builder()
+                .success(true)
+                .message("Hủy đặt bàn thành công")
+                .data(datBanService.huyDatBan(id))
                 .build();
     }
 }

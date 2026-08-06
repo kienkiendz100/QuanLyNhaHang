@@ -1,5 +1,6 @@
 package com.kien.quanlynhahang.dto;
 
+import com.kien.quanlynhahang.entity.enums.TrangThaiBan;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -12,7 +13,7 @@ public class BanDTO {
     private Integer sucChua;
 
     @Schema(description = "Trạng thái bàn", example = "TRONG")
-    private String trangThai;
+    private TrangThaiBan trangThai;
 
     @Schema(description = "Mã khu vực của bàn", example = "1")
     private Integer maKhuVuc;

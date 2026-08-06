@@ -1,6 +1,7 @@
 package com.kien.quanlynhahang.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.kien.quanlynhahang.entity.enums.TrangThaiBan;
 import jakarta.persistence.*;
 import lombok.Data;
 @Entity
@@ -12,7 +13,10 @@ public class Ban {
     private Integer maBan;
     private String tenBan;
     private Integer sucChua;
-    private String trangThai;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "trangThai", nullable = false)
+    private TrangThaiBan status = TrangThaiBan.TRONG;
 
     @JsonIgnore
     @ManyToOne
